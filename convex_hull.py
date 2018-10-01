@@ -1,7 +1,8 @@
 #!/usr/bin/python3
 # why the shebang here, when it's imported?  Can't really be used stand alone, right?  And fermat.py didn't have one...
 # this is 4-5 seconds slower on 1000000 points than Ryan's desktop...  Why?
-
+import ConvexHullSolver
+import time
 
 from which_pyqt import PYQT_VER
 if PYQT_VER == 'PYQT5':
@@ -10,11 +11,6 @@ elif PYQT_VER == 'PYQT4':
 	from PyQt4.QtCore import QLineF, QPointF, QThread, pyqtSignal
 else:
 	raise Exception('Unsupported Version of PyQt: {}'.format(PYQT_VER))
-
-
-
-import time
-
 
 
 class ConvexHullSolverThread(QThread):
@@ -26,23 +22,23 @@ class ConvexHullSolverThread(QThread):
 	def __del__(self):
 		self.wait()
 
-	show_hull = pyqtSignal(list,tuple)
+	show_hull = pyqtSignal(list, tuple)
 	display_text = pyqtSignal(str)
 
 # some additional thread signals you can implement and use for debugging, if you like
-	show_tangent = pyqtSignal(list,tuple)
+	show_tangent = pyqtSignal(list, tuple)
 	erase_hull = pyqtSignal(list)
 	erase_tangent = pyqtSignal(list)
-					
 
-	def run( self):
+	def run(self):
 		assert( type(self.points) == list and type(self.points[0]) == QPointF )
 
 		n = len(self.points)
 		print( 'Computing Hull for set of {} points'.format(n) )
 
 		t1 = time.time()
-		# TODO: SORT THE POINTS BY INCREASING X-VALUE
+		# SORT THE POINTS BY INCREASING X-VALUE
+		ConvexHullSolver.sort_points_by_x(self.points)
 		t2 = time.time()
 		print('Time Elapsed (Sorting): {:3.3f} sec'.format(t2-t1))
 
