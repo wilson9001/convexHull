@@ -1,8 +1,9 @@
 #!/usr/bin/python3
 # why the shebang here, when it's imported?  Can't really be used stand alone, right?  And fermat.py didn't have one...
 # this is 4-5 seconds slower on 1000000 points than Ryan's desktop...  Why?
-import ConvexHullSolver
+from ConvexHullSolver import ConvexHullSolver
 import time
+from operator import methodcaller
 
 from which_pyqt import PYQT_VER
 if PYQT_VER == 'PYQT5':
@@ -31,19 +32,22 @@ class ConvexHullSolverThread(QThread):
 	erase_tangent = pyqtSignal(list)
 
 	def run(self):
-		assert( type(self.points) == list and type(self.points[0]) == QPointF )
+		assert(type(self.points) == list and type(self.points[0]) == QPointF )
 
 		n = len(self.points)
 		print( 'Computing Hull for set of {} points'.format(n) )
 
+		convexHullSolver = ConvexHullSolver()
+
 		t1 = time.time()
 		# SORT THE POINTS BY INCREASING X-VALUE
-		ConvexHullSolver.sort_points_by_x(self.points)
+		convexHullSolver.sort_points_by_x(self.points)
 		t2 = time.time()
 		print('Time Elapsed (Sorting): {:3.3f} sec'.format(t2-t1))
 
 		t3 = time.time()
-		# TODO: COMPUTE THE CONVEX HULL USING DIVIDE AND CONQUER
+		# COMPUTE THE CONVEX HULL USING DIVIDE AND CONQUER
+		complete_hull_and_points = convexHullSolver.compute_hull(self.points)
 		t4 = time.time()
 
 		USE_DUMMY = True
@@ -59,7 +63,7 @@ class ConvexHullSolverThread(QThread):
 
 		else:
 			# TODO: PASS THE CONVEX HULL LINES BACK TO THE GUI FOR DISPLAY
-			pass
+			self.show_hull.emit(complete_hull_and_points[0].getLines(), (255, 0, 0))
 			
 		# send a signal to the GUI thread with the time used to compute the hull
 		self.display_text.emit('Time Elapsed (Convex Hull): {:3.3f} sec'.format(t4-t3))

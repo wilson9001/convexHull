@@ -11,3 +11,4 @@ HISTORY.txt
 README.txt
 .idea
 venv
+__pycache__
