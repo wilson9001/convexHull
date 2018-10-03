@@ -21,19 +21,19 @@ class ConvexHullSolver:
         points.sort(key=methodcaller('x'))
 
     def calculate_slope(self, left_point, right_point):
-        rise = right_point.y - left_point.y
-        run = right_point.x - left_point.x
+        rise = right_point.y() - left_point.y()
+        run = right_point.x() - left_point.x()
 
         return rise / run
 
     def delete_lines_and_points(self, number_to_delete_front, number_to_delete_back, points_to_trim, lines):
-        points_to_delete = set()
+        points_to_delete = list()
 
         for i in range(number_to_delete_front):
-            points_to_delete.add(points_to_trim.pop(0))
+            points_to_delete.append(points_to_trim.pop(0))
 
         for i in range(number_to_delete_back):
-            points_to_delete.add(points_to_trim.pop())
+            points_to_delete.append(points_to_trim.pop())
 
         for line in lines:
             if line.p1() in points_to_delete or line.p2() in points_to_delete:
@@ -42,15 +42,14 @@ class ConvexHullSolver:
     def combine_hulls(self, left_points, left_hull, right_points, right_hull, side): # returns combined hull, points
         left_changed = True
         right_changed = True
-        first_evaluation = True
 
         left_index_top, right_index_top = 0, 0
 
         slope_current = self.calculate_slope(left_points[left_index_top], right_points[right_index_top])
 
-        #find new top line
+        # find new top line
         while left_changed or right_changed:
-            if right_changed:
+            if left_changed:
                 slope_new = self.calculate_slope(left_points[(left_index_top + 1) % len(left_points)], right_points[right_index_top])
                 if slope_new < slope_current:
                     slope_current = slope_new
@@ -59,8 +58,8 @@ class ConvexHullSolver:
                 else:
                     left_changed = False
 
-            if left_changed or first_evaluation:
-                slope_new = self.calculate_slope(left_points[left_index_top], right_points[(right_index_top + 1) % len(right_index_top)])
+            if right_changed:
+                slope_new = self.calculate_slope(left_points[left_index_top], right_points[(right_index_top + 1) % len(right_points)])
                 if slope_new > slope_current:
                     slope_current = slope_new
                     right_index_top += 1
@@ -68,19 +67,16 @@ class ConvexHullSolver:
                 else:
                     right_changed = False
 
-                first_evaluation = False
-
         new_top_edge = QLineF(left_points[left_index_top], right_points[right_index_top])
 
         # Find bottom line
         left_changed = True
         right_changed = True
-        first_evaluation = True
         left_index_bottom, right_index_bottom = 0, 0
 
         slope_current = self.calculate_slope(left_points[left_index_bottom], right_points[right_index_bottom])
         while left_changed or right_changed:
-            if right_changed:
+            if left_changed:
                 slope_new = self.calculate_slope(left_points[(left_index_bottom - 1) % len(left_points)], right_points[right_index_bottom])
                 if slope_new > slope_current:
                     slope_current = slope_new
@@ -89,7 +85,7 @@ class ConvexHullSolver:
                 else:
                     left_changed = False
 
-            if left_changed or first_evaluation:
+            if right_changed:
                 slope_new = self.calculate_slope(left_points[left_index_bottom], right_points[(right_index_bottom - 1) % len(right_points)])
                 if slope_new < slope_current:
                     slope_current = slope_new
@@ -98,11 +94,12 @@ class ConvexHullSolver:
                 else:
                     right_changed = False
 
-                first_evaluation = False
-
         new_bottom_edge = QLineF(left_points[left_index_bottom], right_points[right_index_bottom])
 
+        points_to_check = [left_points[left_index_bottom], left_points[left_index_top], right_points[right_index_top], right_points[right_index_bottom]]
+
         # Trim point arrays and delete unneeded points & associated lines.
+        #TODO: fix this math
         number_to_delete_front = abs(0 - left_index_top)
         number_to_delete_back = (len(left_points) - 1) - left_index_bottom
 
@@ -114,8 +111,6 @@ class ConvexHullSolver:
         self.delete_lines_and_points(number_to_delete_front, number_to_delete_back, right_points, right_hull.getLines())
 
         # Arrange trimmed arrays and fuse together
-        points_to_check = {left_points[left_index_bottom], left_points[left_index_top], right_points[right_index_top], right_points[right_index_bottom]}
-
         combined_points = list()
 
         if side == side.L:
@@ -154,6 +149,8 @@ class ConvexHullSolver:
         combined_lines = list()
         combined_lines.extend(left_hull.getLines())
         combined_lines.extend(right_hull.getLines())
+        combined_lines.append(new_top_edge)
+        combined_lines.append(new_bottom_edge)
 
         # Check points w/ newly created lines to see if there is a third middle line to delete
 

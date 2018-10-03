@@ -50,7 +50,7 @@ class ConvexHullSolverThread(QThread):
 		complete_hull_and_points = convexHullSolver.compute_hull(self.points)
 		t4 = time.time()
 
-		USE_DUMMY = True
+		USE_DUMMY = False
 		if USE_DUMMY:
 			# this is a dummy polygon of the first 3 unsorted points
 			polygon = [QLineF(self.points[i],self.points[(i+1)%3]) for i in range(3)]
