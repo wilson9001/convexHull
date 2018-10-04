@@ -184,7 +184,7 @@ class Proj2GUI( QMainWindow ):
 	def solveClicked(self):
 		#print('solveClicked')
 		#self.solver.compute_hull(self.points)
-		solver_thread = ConvexHullSolverThread(self.points,self.showRecursion.isChecked())
+		solver_thread = ConvexHullSolverThread(self.points, self.showRecursion.isChecked())
 		solver_thread.show_hull.connect(self.view.addLines)
 		solver_thread.show_tangent.connect(self.view.addLines)
 		solver_thread.erase_hull.connect(self.view.clearLines)

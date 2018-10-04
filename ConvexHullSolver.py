@@ -26,7 +26,7 @@ class ConvexHullSolver:
 
         return rise / run
 
-    def delete_points_and_lines(self, points, top_index, bottom_index, lines):
+    def delete_points_and_lines(self, points, top_index, bottom_index, lines, convex_hull):
         bottom_point = points[bottom_index]
         points_to_delete = list()
 
@@ -40,70 +40,126 @@ class ConvexHullSolver:
 
         while i < len(lines):
             if lines[i].p1() in points_to_delete or lines[i].p2() in points_to_delete:
+                if convex_hull.pause:
+                    convex_hull.erase_hull.emit([lines[i]])
                 lines.pop(i)
             else:
                 i += 1
 
-    def combine_hulls(self, left_points, left_hull, right_points, right_hull, side): # returns combined hull, points
+    def combine_hulls(self, left_points, left_hull, right_points, right_hull, side, convex_hull): # returns combined hull, points
         left_changed = True
         right_changed = True
 
         left_index_top, right_index_top = 0, 0
 
-        slope_current = self.calculate_slope(left_points[left_index_top], right_points[right_index_top])
+        current_new_line = QLineF(left_points[left_index_top], right_points[right_index_top])
+        if convex_hull.pause:
+            convex_hull.show_hull.emit([current_new_line], (0, 255, 0))
+        slope_current = self.calculate_slope(current_new_line.p1(), current_new_line.p2())
 
         # find new top line
         while left_changed or right_changed:
-            slope_new = self.calculate_slope(left_points[(left_index_top + 1) % len(left_points)], right_points[right_index_top])
+            potential_new_line = QLineF(left_points[(left_index_top + 1) % len(left_points)], right_points[right_index_top])
+            if convex_hull.pause:
+                convex_hull.show_hull.emit([potential_new_line], (0, 0, 255))
+            slope_new = self.calculate_slope(potential_new_line.p1(), potential_new_line.p2())
             if slope_new < slope_current:
+                if convex_hull.pause:
+                    convex_hull.erase_hull.emit([current_new_line, potential_new_line])
+                current_new_line = potential_new_line
+                if convex_hull.pause:
+                    convex_hull.show_hull.emit([current_new_line], (0, 255, 0))
                 slope_current = slope_new
                 left_index_top += 1
                 left_changed = True
             else:
+                if convex_hull.pause:
+                    convex_hull.erase_hull.emit([potential_new_line])
                 left_changed = False
 
-            slope_new = self.calculate_slope(left_points[left_index_top], right_points[(right_index_top + 1) % len(right_points)])
+            potential_new_line = QLineF(left_points[left_index_top], right_points[(right_index_top + 1) % len(right_points)])
+            if convex_hull.pause:
+                convex_hull.show_hull.emit([potential_new_line], (0, 0, 255))
+            slope_new = self.calculate_slope(potential_new_line.p1(), potential_new_line.p2())
             if slope_new > slope_current:
+                if convex_hull.pause:
+                    convex_hull.erase_hull.emit([current_new_line, potential_new_line])
+                current_new_line = potential_new_line
+                if convex_hull.pause:
+                    convex_hull.show_hull.emit([current_new_line], (0, 255, 0))
                 slope_current = slope_new
                 right_index_top += 1
                 right_changed = True
             else:
+                if convex_hull.pause:
+                    convex_hull.erase_hull.emit([potential_new_line])
                 right_changed = False
 
-        new_top_edge = QLineF(left_points[left_index_top], right_points[right_index_top])
+        if convex_hull.pause:
+            convex_hull.erase_hull.emit([current_new_line])
+        new_top_edge = current_new_line
+        if convex_hull.pause:
+            convex_hull.show_hull.emit([new_top_edge], (255, 0, 0))
 
         # Find bottom line
         left_changed = True
         right_changed = True
         left_index_bottom, right_index_bottom = 0, 0
 
-        slope_current = self.calculate_slope(left_points[left_index_bottom], right_points[right_index_bottom])
+        current_new_line = QLineF(left_points[left_index_bottom], right_points[right_index_bottom])
+        if convex_hull.pause:
+            convex_hull.show_hull.emit([current_new_line], (0, 255, 0))
+        slope_current = self.calculate_slope(current_new_line.p1(), current_new_line.p2())
         while left_changed or right_changed:
-            slope_new = self.calculate_slope(left_points[(left_index_bottom - 1) % len(left_points)], right_points[right_index_bottom])
+            potential_new_line = QLineF(left_points[(left_index_bottom - 1) % len(left_points)], right_points[right_index_bottom])
+            if convex_hull.pause:
+                convex_hull.show_hull.emit([potential_new_line], (0, 0, 255))
+            slope_new = self.calculate_slope(potential_new_line.p1(), potential_new_line.p2())
             if slope_new > slope_current:
+                if convex_hull.pause:
+                    convex_hull.erase_hull.emit([current_new_line, potential_new_line])
+                current_new_line = potential_new_line
+                if convex_hull.pause:
+                    convex_hull.show_hull.emit([current_new_line], (0, 255, 0))
                 slope_current = slope_new
                 left_index_bottom = ((left_index_bottom - 1) % len(left_points))
                 left_changed = True
             else:
+                if convex_hull.pause:
+                    convex_hull.erase_hull.emit([potential_new_line])
                 left_changed = False
 
-            slope_new = self.calculate_slope(left_points[left_index_bottom], right_points[(right_index_bottom - 1) % len(right_points)])
+            potential_new_line = QLineF(left_points[left_index_bottom], right_points[(right_index_bottom - 1) % len(right_points)])
+            if convex_hull.pause:
+                convex_hull.show_hull.emit([potential_new_line], (0, 0, 255))
+            slope_new = self.calculate_slope(potential_new_line.p1(), potential_new_line.p2())
             if slope_new < slope_current:
+                if convex_hull.pause:
+                    convex_hull.erase_hull.emit([current_new_line, potential_new_line])
+                current_new_line = potential_new_line
+                if convex_hull.pause:
+                    convex_hull.show_hull.emit([current_new_line], (0, 255, 0))
                 slope_current = slope_new
                 right_index_bottom = ((right_index_bottom - 1) % len(right_points))
                 right_changed = True
             else:
+                if convex_hull.pause:
+                    convex_hull.erase_hull.emit([potential_new_line])
                 right_changed = False
 
-        new_bottom_edge = QLineF(left_points[left_index_bottom], right_points[right_index_bottom])
+        if convex_hull.pause:
+            convex_hull.erase_hull.emit([current_new_line])
+        new_bottom_edge = current_new_line
+        if convex_hull.pause:
+            convex_hull.show_hull.emit([new_bottom_edge], (255, 0, 0))
 
         points_to_check = [left_points[left_index_bottom], left_points[left_index_top], right_points[right_index_top], right_points[right_index_bottom]]
 
         # Trim point arrays and delete unneeded points & associated lines.
 
-        self.delete_points_and_lines(left_points, left_index_top, left_index_bottom, left_hull.getLines())
+        self.delete_points_and_lines(left_points, left_index_top, left_index_bottom, left_hull.getLines(), convex_hull)
 
-        self.delete_points_and_lines(right_points, right_index_top, right_index_bottom, right_hull.getLines())
+        self.delete_points_and_lines(right_points, right_index_top, right_index_bottom, right_hull.getLines(), convex_hull)
 
         # Arrange trimmed arrays and fuse together
         combined_points = list()
@@ -155,7 +211,10 @@ class ConvexHullSolver:
                 index_p1 = combined_points.index(line.p1())
                 index_p2 = combined_points.index(line.p2())
                 distance = abs(index_p1 - index_p2)
-                if distance != 1 and distance != (len(combined_points) -1):
+                if distance != 1 and distance != (len(combined_points) - 1):
+                    print("Line deleted after merge")
+                    if convex_hull.pause:
+                        convex_hull.erase_hull.emit([line])
                     del line
 
         #i = 0
@@ -177,13 +236,15 @@ class ConvexHullSolver:
         print("Done working on removing combined lines")
         return [Hull(combined_lines), combined_points]
 
-
-    def compute_hull(self, points, side=Side.W):  # returns hull, points
+    def compute_hull(self, points, convex_hull, side=Side.W):  # returns hull, points
         lines = []
         completed_hull_and_points = None
 
         if len(points) == 2:
-            lines.append(QLineF(points[0], points[1]))
+            new_line = QLineF(points[0], points[1])
+            if convex_hull.pause:
+                convex_hull.show_hull.emit([new_line], (255, 0, 0))
+            lines.append(new_line)
 
             if side == Side.L:
                 points.reverse()
@@ -192,7 +253,10 @@ class ConvexHullSolver:
 
         elif len(points) == 3:
             for i in range(3):
-                lines.append(QLineF(points[i], points[(i + 1) % 3]))
+                new_line = QLineF(points[i], points[(i + 1) % 3])
+                if convex_hull.pause:
+                    convex_hull.show_hull.emit([new_line], (255, 0, 0))
+                lines.append(new_line)
 
             if side == Side.L:
                 right_most_point = points.pop(2)
@@ -208,9 +272,9 @@ class ConvexHullSolver:
             completed_hull_and_points = [Hull(lines), points]
         elif len(points) > 3:
             left_points, right_points = points[:len(points)//2], points[len(points)//2:]
-            left_hull_and_points = self.compute_hull(left_points, Side.L)
-            right_hull_and_points = self.compute_hull(right_points, Side.R)
+            left_hull_and_points = self.compute_hull(left_points, convex_hull, Side.L)
+            right_hull_and_points = self.compute_hull(right_points, convex_hull, Side.R)
 
-            completed_hull_and_points = self.combine_hulls(left_hull_and_points[1], left_hull_and_points[0], right_hull_and_points[1], right_hull_and_points[0], side)
+            completed_hull_and_points = self.combine_hulls(left_hull_and_points[1], left_hull_and_points[0], right_hull_and_points[1], right_hull_and_points[0], side, convex_hull)
 
         return completed_hull_and_points

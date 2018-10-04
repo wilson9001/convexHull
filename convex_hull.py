@@ -15,7 +15,7 @@ else:
 
 
 class ConvexHullSolverThread(QThread):
-	def __init__( self, unsorted_points,demo):
+	def __init__( self, unsorted_points, demo):
 		self.points = unsorted_points					
 		self.pause = demo
 		QThread.__init__(self)
@@ -47,7 +47,7 @@ class ConvexHullSolverThread(QThread):
 
 		t3 = time.time()
 		# COMPUTE THE CONVEX HULL USING DIVIDE AND CONQUER
-		complete_hull_and_points = convexHullSolver.compute_hull(self.points)
+		complete_hull_and_points = convexHullSolver.compute_hull(self.points, self)
 		t4 = time.time()
 
 		USE_DUMMY = False
