@@ -1,0 +1,95 @@
+Computing Hull for set of 10 points
+Time Elapsed (Sorting): 0.000 sec
+Time Elapsed (Convex Hull): 0.008 sec
+Computing Hull for set of 10 points
+Time Elapsed (Sorting): 0.000 sec
+Time Elapsed (Convex Hull): 0.001 sec
+Computing Hull for set of 10 points
+Time Elapsed (Sorting): 0.000 sec
+Time Elapsed (Convex Hull): 0.001 sec
+Computing Hull for set of 10 points
+Time Elapsed (Sorting): 0.000 sec
+Time Elapsed (Convex Hull): 0.001 sec
+Computing Hull for set of 10 points
+Time Elapsed (Sorting): 0.000 sec
+Time Elapsed (Convex Hull): 0.000 sec
+
+Computing Hull for set of 100 points
+Time Elapsed (Sorting): 0.000 sec
+Time Elapsed (Convex Hull): 0.004 sec
+Computing Hull for set of 100 points
+Time Elapsed (Sorting): 0.000 sec
+Time Elapsed (Convex Hull): 0.006 sec
+Computing Hull for set of 100 points
+Time Elapsed (Sorting): 0.000 sec
+Time Elapsed (Convex Hull): 0.006 sec
+Computing Hull for set of 100 points
+Time Elapsed (Sorting): 0.000 sec
+Time Elapsed (Convex Hull): 0.007 sec
+Computing Hull for set of 100 points
+Time Elapsed (Sorting): 0.000 sec
+Time Elapsed (Convex Hull): 0.007 sec
+
+Computing Hull for set of 1000 points
+Time Elapsed (Sorting): 0.001 sec
+Time Elapsed (Convex Hull): 0.030 sec
+Computing Hull for set of 1000 points
+Time Elapsed (Sorting): 0.001 sec
+Time Elapsed (Convex Hull): 0.040 sec
+Computing Hull for set of 1000 points
+Time Elapsed (Sorting): 0.001 sec
+Time Elapsed (Convex Hull): 0.032 sec
+Computing Hull for set of 1000 points
+Time Elapsed (Sorting): 0.001 sec
+Time Elapsed (Convex Hull): 0.040 sec
+Computing Hull for set of 1000 points
+Time Elapsed (Sorting): 0.001 sec
+Time Elapsed (Convex Hull): 0.034 sec
+
+Computing Hull for set of 10000 points
+Time Elapsed (Sorting): 0.010 sec
+Time Elapsed (Convex Hull): 0.538 sec
+Computing Hull for set of 10000 points
+Time Elapsed (Sorting): 0.011 sec
+Time Elapsed (Convex Hull): 0.528 sec
+Computing Hull for set of 10000 points
+Time Elapsed (Sorting): 0.010 sec
+Time Elapsed (Convex Hull): 0.501 sec
+Computing Hull for set of 10000 points
+Time Elapsed (Sorting): 0.007 sec
+Time Elapsed (Convex Hull): 0.576 sec
+Computing Hull for set of 10000 points
+Time Elapsed (Sorting): 0.007 sec
+Time Elapsed (Convex Hull): 0.499 sec
+
+Computing Hull for set of 100000 points
+Time Elapsed (Sorting): 0.053 sec
+Time Elapsed (Convex Hull): 4.458 sec
+Computing Hull for set of 100000 points
+Time Elapsed (Sorting): 0.052 sec
+Time Elapsed (Convex Hull): 4.473 sec
+Computing Hull for set of 100000 points
+Time Elapsed (Sorting): 0.055 sec
+Time Elapsed (Convex Hull): 4.496 sec
+Computing Hull for set of 100000 points
+Time Elapsed (Sorting): 0.055 sec
+Time Elapsed (Convex Hull): 4.451 sec
+Computing Hull for set of 100000 points
+Time Elapsed (Sorting): 0.053 sec
+Time Elapsed (Convex Hull): 4.697 sec
+
+Computing Hull for set of 1000000 points
+Time Elapsed (Sorting): 0.661 sec
+Time Elapsed (Convex Hull): 49.879 sec
+Computing Hull for set of 1000000 points
+Time Elapsed (Sorting): 0.649 sec
+Time Elapsed (Convex Hull): 51.516 sec
+Computing Hull for set of 1000000 points
+Time Elapsed (Sorting): 0.686 sec
+Time Elapsed (Convex Hull): 51.058 sec
+Computing Hull for set of 1000000 points
+Time Elapsed (Sorting): 0.678 sec
+Time Elapsed (Convex Hull): 51.276 sec
+Computing Hull for set of 1000000 points
+Time Elapsed (Sorting): 0.681 sec
+Time Elapsed (Convex Hull): 51.318 sec
