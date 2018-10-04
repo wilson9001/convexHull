@@ -165,45 +165,42 @@ class ConvexHullSolver:
         combined_points = list()
 
         if side == side.L:
-            right_most_point_index = 0
-            for i in range(len(right_points)):
-                if right_points[i].x() > right_points[right_most_point_index].x():
-                    right_most_point_index = i
+            # find rightmost point and pop it off the list. Combine lists and sort for CC order based on slope
+            i = 1
+            right_most_index = 0
 
-            cc_part, c_part = right_points[:right_most_point_index + 1], right_points[right_most_point_index + 1:]
-            cc_part.reverse()
-            c_part.reverse()
+            while i < len(right_points):
+                if right_points[i].x() > right_points[right_most_index].x():
+                    right_most_index = i
+                i += 1
 
-            combined_points.extend(cc_part)
-            combined_points.extend(left_points)
-            combined_points.extend(c_part)
+            right_most_point = right_points.pop(right_most_index)
+            right_points.extend(left_points)
 
-        elif side == side.R:
-            left_most_point_index = 0
-            for i in range(len(left_points)):
-                if left_points[i].x() < left_points[left_most_point_index].x():
-                    left_most_point_index = i
-
-            c_part, cc_part = left_points[:left_most_point_index + 1], left_points[left_most_point_index:]
-            cc_part.reverse()
-            c_part.reverse()
-
-            combined_points.extend(c_part)
-            combined_points.extend(right_points)
-            combined_points.extend(cc_part)
+            right_points.sort(key=lambda point: self.calculate_slope(point, right_most_point))
+            right_points.insert(0, right_most_point)
+            combined_points = right_points
 
         else:
-            combined_points.extend(left_points)
-            right_points.reverse()
-            combined_points.extend(right_points)
+            # find leftmost point and pop it off the list. Combine lists and sort for C order based on slope
+            i = 1
+            left_most_index = 0
 
-        # Combine hull lines from individual hulls to form new hull
+            while i < len(left_points):
+                if left_points[i].x() < left_points[left_most_index].x():
+                    left_most_index = i
+                i += 1
+
+            left_most_point = left_points.pop(left_most_index)
+            left_points.extend(right_points)
+
+            left_points.sort(key=lambda point: self.calculate_slope(left_most_point, point), reverse=True)
+            left_points.insert(0, left_most_point)
+            combined_points = left_points
+
         combined_lines = list()
         combined_lines.extend(left_hull.getLines())
-        combined_lines.extend(right_hull.getLines())  # TODO: are the lines actually being deleted from the hull?
-        combined_lines.append(new_top_edge)
-        combined_lines.append(new_bottom_edge)  # move these below?
-
+        combined_lines.extend(right_hull.getLines())
         # Check points w/ newly created lines to see if there is a third middle line to delete
 
         for line in combined_lines:
@@ -212,28 +209,15 @@ class ConvexHullSolver:
                 index_p2 = combined_points.index(line.p2())
                 distance = abs(index_p1 - index_p2)
                 if distance != 1 and distance != (len(combined_points) - 1):
-                    print("Line deleted after merge")
+                    #print("Line deleted after merge")
                     if convex_hull.pause:
                         convex_hull.erase_hull.emit([line])
-                    del line
+                    combined_lines.remove(line)
 
-        #i = 0
-        #print("About to begin working on removing leftover combined lines")
-        #while i < len(combined_lines):
-        #    print("i =")
-        #    print(i)
-        #    if combined_lines[i].p1() in points_to_check or combined_lines[i].p2() in points_to_check:
-        #        index_p1 = combined_points.index(combined_lines[i].p1())
-        #        index_p2 = combined_points.index(combined_lines[i].p2())
-        #        distance = abs(index_p1 - index_p2)
-        #        if distance != 1 and distance != (len(combined_points) - 1):
-        #            combined_lines.pop(i)
-        #        else:
-        #            i += 1
-        #    else:
-        #        i += 1
+        combined_lines.append(new_top_edge)
+        combined_lines.append(new_bottom_edge)
 
-        print("Done working on removing combined lines")
+        #print("Done working on removing combined lines")
         return [Hull(combined_lines), combined_points]
 
     def compute_hull(self, points, convex_hull, side=Side.W):  # returns hull, points
