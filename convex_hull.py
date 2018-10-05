@@ -62,7 +62,7 @@ class ConvexHullSolverThread(QThread):
 			self.show_hull.emit(polygon,(255,0,0))
 
 		else:
-			# TODO: PASS THE CONVEX HULL LINES BACK TO THE GUI FOR DISPLAY
+			# PASS THE CONVEX HULL LINES BACK TO THE GUI FOR DISPLAY
 			self.show_hull.emit(complete_hull_and_points[0].getLines(), (255, 0, 0))
 			
 		# send a signal to the GUI thread with the time used to compute the hull
